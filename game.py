@@ -1,7 +1,15 @@
 import sys
 import pygame
+from pathlib import Path
 
 TILE_SIZE = 128
+
+def asset_path(*parts):
+    if getattr(sys, "frozen", False):
+        base = Path(sys._MEIPASS)
+    else:
+        base = Path(__file__).parent
+    return base.joinpath(*["assets", *parts])
 
 class Game:
     def __init__(self):
@@ -13,8 +21,8 @@ class Game:
         self.board = [[0,0,0],[0,0,0],[0,0,0]]
         self.win_state = False
         self.font = pygame.font.SysFont(None, int(TILE_SIZE / 3))
-        self.jumpscare_img = pygame.image.load("./assets/jumpscare.png")
-        self.the_real_jumpscare = pygame.image.load("./assets/the_real_jumpscare.png")
+        self.jumpscare_img = pygame.image.load(asset_path("jumpscare.png"))
+        self.the_real_jumpscare = pygame.image.load(asset_path("the_real_jumpscare.png"))
 
     def process_click(self, event):
         mouse_x, mouse_y = event.pos
@@ -24,7 +32,7 @@ class Game:
 
         if (self.board[y][x] != 0):
             self.screen.blit(self.jumpscare_img, (0,0))
-            pygame.mixer.Sound("./assets/jumpscare.mp3").play()
+            pygame.mixer.Sound(asset_path("jumpscare.mp3")).play()
             pygame.display.update()
             pygame.time.delay(1000)
             return
@@ -50,7 +58,7 @@ class Game:
                     sec_diag_check = False
 
         if row_check or col_check or prim_diag_check or sec_diag_check:
-            pygame.mixer.Sound("./assets/you_win_in_life.mp3").play()
+            pygame.mixer.Sound(asset_path("you_win_in_life.mp3")).play()
             self.win_state = True
             return
 
